@@ -1,24 +1,24 @@
 import { z } from "zod";
-import { MODE_SCHEMA, type ModeSetting } from "./schemas.js";
+import { MODE_SCHEMA, type ModeSetting, NUMBER_SCHEMA, PLACEHOLDER_NUMBER_SCHEMA } from "./schemas.js";
 import { Action } from "./Action.js";
 
-export const HEALTH_SCHEMA = z
-	.number()
-	.min(1)
-	.max(200)
-	.default(20);
-export type HealthSetting = z.infer<typeof HEALTH_SCHEMA>;
+export const HEALTH_AMOUNT_SCHEMA = NUMBER_SCHEMA
+    .min(1n)
+    .max(200n)
+    .default(20n)
+    .or(PLACEHOLDER_NUMBER_SCHEMA);
+export type HealthAmountSetting = z.infer<typeof HEALTH_AMOUNT_SCHEMA>;
 
 export class ChangeHealthAction extends Action {
-	private _health: HealthSetting;
+	private _health: HealthAmountSetting;
 	private _mode: ModeSetting;
 
 	constructor({
 		health,
 		mode,
-	}: { health?: HealthSetting; mode?: ModeSetting } = {}) {
+	}: { health?: HealthAmountSetting; mode?: ModeSetting } = {}) {
         super();
-		this._health = HEALTH_SCHEMA.parse(health);
+		this._health = HEALTH_AMOUNT_SCHEMA.parse(health);
 		this._mode = MODE_SCHEMA.parse(mode);
 	}
 
@@ -30,12 +30,12 @@ export class ChangeHealthAction extends Action {
         this._mode = MODE_SCHEMA.parse(value);
     }
 
-    get health(): HealthSetting {
+    get health(): HealthAmountSetting {
         return this._health;
     }
     
-    set health(value: HealthSetting) {
-        this._health = HEALTH_SCHEMA.parse(value);
+    set health(value: HealthAmountSetting) {
+        this._health = HEALTH_AMOUNT_SCHEMA.parse(value);
     }
 
     override getEditDistance(other: this): number {
