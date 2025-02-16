@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { ChangeHealthAction } from "./actions/ChangeHealthAction.js";
+import { ACTION_SCHEMA } from "./actions/actions.js";
 
 function tryParse<T>(block: () => T): T | undefined {
 	try {
@@ -11,17 +11,32 @@ function tryParse<T>(block: () => T): T | undefined {
 	}
 }
 
-const health1 = tryParse(() => new ChangeHealthAction({ health: "555555555555555555555555" }))
+const health1 = tryParse(() => ACTION_SCHEMA.parse({
+	type: "CHANGE_HEALTH",
+	amount: "555555555555555555555555"
+}))
 console.log(health1);
 
-const health2 = tryParse(() => new ChangeHealthAction({ health: "abcdefg" }))
+const health2 = tryParse(() => ACTION_SCHEMA.parse({
+	type: "CHANGE_HEALTH",
+	amount: "abcdefg"
+}))
 console.log(health2);
 
-const health3 = tryParse(() => new ChangeHealthAction({ health: "11" }))
+const health3 = tryParse(() => ACTION_SCHEMA.parse({
+	type: "CHANGE_HEALTH",
+	amount: 11,
+}))
 console.log(health3);
 
-const health4 = tryParse(() => new ChangeHealthAction({ health: "%badplaceholder%" }))
+const health4 = tryParse(() => ACTION_SCHEMA.parse({
+	type: "CHANGE_HEALTH",
+	amount: "%badplaceholder%"
+}))
 console.log(health4);
 
-const health5 = tryParse(() => new ChangeHealthAction({ health: "%player.location.x%" }))
+const health5 = tryParse(() => ACTION_SCHEMA.parse({
+	type: "CHANGE_HEALTH",
+	amount: "%player.location.x%"
+}))
 console.log(health5);
