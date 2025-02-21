@@ -8,8 +8,8 @@ export const ACTION_CONDITIONAL_SCHEMA = z.object({
     elseActions: z.lazy(() => ACTION_LIMITED_SCHEMA).array().default([])
 });
 
-export const ACTION_CHANGE_GROUP_SCHEMA = z.object({
-    type: z.literal("CHANGE_GROUP"),
+export const ACTION_SET_GROUP_SCHEMA = z.object({
+    type: z.literal("SET_GROUP"),
     group: z.string().optional(),
     demotionProtection: z.boolean().default(true)
 });
@@ -94,7 +94,7 @@ export const ACTION_MESSAGE_SCHEMA = z.object({
 
 export const ACTION_SCHEMA = z.discriminatedUnion("type", [
     ACTION_CONDITIONAL_SCHEMA,
-    ACTION_CHANGE_GROUP_SCHEMA,
+    ACTION_SET_GROUP_SCHEMA,
     ACTION_KILL_SCHEMA,
     ACTION_HEAL_SCHEMA,
     ACTION_TITLE_SCHEMA,
@@ -109,7 +109,7 @@ export const ACTION_SCHEMA = z.discriminatedUnion("type", [
 ]);
 
 export const ACTION_LIMITED_SCHEMA = z.discriminatedUnion("type", [
-    ACTION_CHANGE_GROUP_SCHEMA,
+    ACTION_SET_GROUP_SCHEMA,
     ACTION_KILL_SCHEMA,
     ACTION_HEAL_SCHEMA,
     ACTION_TITLE_SCHEMA,
