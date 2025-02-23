@@ -28,3 +28,19 @@ export const STAT_NAME_SCHEMA = z
 	.min(1, { message: "Stat name must not be empty" })
 	.max(16, { message: "Stat name exceeds 16-character limit" })
 	.default("Kills");
+
+export const LOCATION_CUSTOM_SCHEMA = z.object({
+	type: z.literal("LOCATION_CUSTOM"),
+});
+
+export const LOCATION_SPAWN_SCHEMA = z.object({
+	type: z.literal("LOCATION_SPAWN")
+});
+
+export const LOCATION_SCHEMA = z
+	.discriminatedUnion("type", [
+		LOCATION_CUSTOM_SCHEMA,
+		LOCATION_SPAWN_SCHEMA
+	]).default({ type: "LOCATION_SPAWN" });
+
+export type Location = z.infer<typeof LOCATION_SCHEMA>;

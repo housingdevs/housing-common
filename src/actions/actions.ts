@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AMOUNT_SCHEMA, MODE_SCHEMA, PLACEHOLDER_NUMBER_SCHEMA, STAT_NAME_SCHEMA } from "./types.js";
+import { AMOUNT_SCHEMA, LOCATION_SCHEMA, MODE_SCHEMA, PLACEHOLDER_NUMBER_SCHEMA, STAT_NAME_SCHEMA } from "./types.js";
 
 export const ACTION_CONDITIONAL_SCHEMA = z.object({
     type: z.literal("CONDITIONAL"),
@@ -92,6 +92,32 @@ export const ACTION_MESSAGE_SCHEMA = z.object({
     message: z.string().default("Hello World!")
 });
 
+export const ACTION_RANDOM_SCHEMA = z.object({
+    type: z.literal("RANDOM"),
+    actions: z.lazy(() => ACTION_LIMITED_SCHEMA).array().default([]),
+});
+
+export const ACTION_SET_VELOCITY_SCHEMA = z.object({
+    type: z.literal("SET_VELOCITY"),
+    x: z.coerce.number().int()
+        .min(1).max(10)
+        .or(PLACEHOLDER_NUMBER_SCHEMA)
+        .default(1),
+    y: z.coerce.number().int()
+        .min(1).max(10)
+        .or(PLACEHOLDER_NUMBER_SCHEMA)
+        .default(1),
+    z: z.coerce.number().int()
+        .min(1).max(10)
+        .or(PLACEHOLDER_NUMBER_SCHEMA)
+        .default(1)
+});
+
+export const ACTION_TELEPORT_SCHEMA = z.object({
+    type: z.literal("TELEPORT"),
+    location: LOCATION_SCHEMA
+});
+
 export const ACTION_SCHEMA = z.discriminatedUnion("type", [
     ACTION_CONDITIONAL_SCHEMA,
     ACTION_SET_GROUP_SCHEMA,
@@ -106,6 +132,9 @@ export const ACTION_SCHEMA = z.discriminatedUnion("type", [
     ACTION_CHANGE_TEAM_STAT_SCHEMA,
     ACTION_CHANGE_HEALTH_SCHEMA,
     ACTION_MESSAGE_SCHEMA,
+    ACTION_RANDOM_SCHEMA,
+    ACTION_SET_VELOCITY_SCHEMA,
+    ACTION_TELEPORT_SCHEMA
 ]);
 
 export const ACTION_LIMITED_SCHEMA = z.discriminatedUnion("type", [
