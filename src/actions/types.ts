@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { isValidNumericalPlaceholder } from "../helpers.js";
 
-export const MODE_SCHEMA = z.enum([
+export const OPERATION_SCHEMA = z.enum([
 	"increment",
 	"decrement",
 	"set",
@@ -9,7 +9,17 @@ export const MODE_SCHEMA = z.enum([
 	"divide",
 ]).default("set");
 
-export type Mode = z.infer<typeof MODE_SCHEMA>;
+export type Operation = z.infer<typeof OPERATION_SCHEMA>;
+
+export const COMPARISON_SCHEMA = z.enum([
+	"less_than",
+	"less_than_or_equals",
+	"equals",
+	"greater_than",
+	"greater_than_or_equals",
+]).default("equals");
+
+export type Comparison = z.infer<typeof COMPARISON_SCHEMA>;
 
 export const PLACEHOLDER_NUMBER_SCHEMA = z
 	.string()
@@ -44,3 +54,11 @@ export const LOCATION_SCHEMA = z
 	]).default({ type: "LOCATION_SPAWN" });
 
 export type Location = z.infer<typeof LOCATION_SCHEMA>;
+
+export const GAMEMODE_SCHEMA = z.enum([
+	"survival",
+	"adventure",
+	"creative"
+]).default("survival");
+
+export type Gamemode = z.infer<typeof GAMEMODE_SCHEMA>;

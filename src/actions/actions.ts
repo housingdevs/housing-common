@@ -1,9 +1,11 @@
 import { z } from "zod";
-import { AMOUNT_SCHEMA, LOCATION_SCHEMA, MODE_SCHEMA, PLACEHOLDER_NUMBER_SCHEMA, STAT_NAME_SCHEMA } from "./types.js";
+import { AMOUNT_SCHEMA, LOCATION_SCHEMA, OPERATION_SCHEMA, PLACEHOLDER_NUMBER_SCHEMA, STAT_NAME_SCHEMA } from "./types.js";
+import { CONDITION_SCHEMA } from "./conditions.js";
 
 export const ACTION_CONDITIONAL_SCHEMA = z.object({
     type: z.literal("CONDITIONAL"),
     matchAny: z.boolean().default(false),
+    conditions: z.array(CONDITION_SCHEMA).default([]),
     ifActions: z.lazy(() => ACTION_LIMITED_SCHEMA).array().default([]),
     elseActions: z.lazy(() => ACTION_LIMITED_SCHEMA).array().default([])
 });
@@ -48,7 +50,7 @@ export const ACTION_RESET_INVENTORY_SCHEMA = z.object({
 
 export const ACTION_CHANGE_MAX_HEALTH_SCHEMA = z.object({
     type: z.literal("CHANGE_MAX_HEALTH"),
-    mode: MODE_SCHEMA,
+    op: OPERATION_SCHEMA,
     amount: z.coerce.number().int()
         .min(1).max(200)
         .or(PLACEHOLDER_NUMBER_SCHEMA)
@@ -59,14 +61,14 @@ export const ACTION_CHANGE_MAX_HEALTH_SCHEMA = z.object({
 export const ACTION_CHANGE_STAT_SCHEMA = z.object({
     type: z.literal("CHANGE_STAT"),
     stat: STAT_NAME_SCHEMA,
-    mode: MODE_SCHEMA,
+    op: OPERATION_SCHEMA,
     amount: AMOUNT_SCHEMA.default(1n)
 });
 
 export const ACTION_CHANGE_GLOBAL_STAT_SCHEMA = z.object({
     type: z.literal("CHANGE_GLOBAL_STAT"),
     stat: STAT_NAME_SCHEMA,
-    mode: MODE_SCHEMA,
+    op: OPERATION_SCHEMA,
     amount: AMOUNT_SCHEMA.default(1n)
 });
 
@@ -74,13 +76,13 @@ export const ACTION_CHANGE_TEAM_STAT_SCHEMA = z.object({
     type: z.literal("CHANGE_TEAM_STAT"),
     stat: STAT_NAME_SCHEMA,
     team: z.string().optional(),
-    mode: MODE_SCHEMA,
+    op: OPERATION_SCHEMA,
     amount: AMOUNT_SCHEMA.default(1n)
 });
 
 export const ACTION_CHANGE_HEALTH_SCHEMA = z.object({
     type: z.literal("CHANGE_HEALTH"),
-    mode: MODE_SCHEMA,
+    op: OPERATION_SCHEMA,
     amount: z.coerce.number().int()
         .min(1).max(200)
         .or(PLACEHOLDER_NUMBER_SCHEMA)
@@ -152,4 +154,5 @@ export const ACTION_LIMITED_SCHEMA = z.discriminatedUnion("type", [
     ACTION_MESSAGE_SCHEMA,
 ]);
 
-export type Action = z.input<typeof ACTION_SCHEMA>;
+export type ActionInput = z.input<typeof ACTION_SCHEMA>;
+export type Action = z.output<typeof ACTION_SCHEMA>;
