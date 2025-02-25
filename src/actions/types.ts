@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isValidNumericalPlaceholder } from "../helpers.js";
+import { isValidNbt, isValidNumericalPlaceholder } from "../helpers.js";
 
 export const OPERATION_SCHEMA = z.enum([
 	"increment",
@@ -62,3 +62,25 @@ export const GAMEMODE_SCHEMA = z.enum([
 ]).default("survival");
 
 export type Gamemode = z.infer<typeof GAMEMODE_SCHEMA>;
+
+export const NBT_SCHEMA = z
+	.string()
+	.superRefine(isValidNbt);
+
+export const INVENTORY_SLOT_SCHEMA = z.enum([
+	"helmet",
+	"chestplate",
+	"leggings",
+	"boots",
+	"first",
+	"hand"
+]).or(
+	z.number().min(-1).max(39)
+).default("first");
+
+export const POTION_EFFECT_SCHEMA = z.enum([
+	"Speed", "Slowness", "Haste", "Mining Fatigue", "Strength", "Instant Health",
+	"Instant Damage", "Jump Boost", "Nausea", "Regeneration", "Resistance",
+	"Fire Resistance", "Water Breathing", "Invisibility", "Blindness", "Night Vision",
+	"Hunger", "Weakness", "Poison", "Wither", "Health Boost", "Absorption"
+]);

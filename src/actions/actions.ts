@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { AMOUNT_SCHEMA, LOCATION_SCHEMA, OPERATION_SCHEMA, PLACEHOLDER_NUMBER_SCHEMA, STAT_NAME_SCHEMA } from "./types.js";
+import {
+    AMOUNT_SCHEMA, INVENTORY_SLOT_SCHEMA,
+    LOCATION_SCHEMA,
+    NBT_SCHEMA,
+    OPERATION_SCHEMA,
+    PLACEHOLDER_NUMBER_SCHEMA, POTION_EFFECT_SCHEMA,
+    STAT_NAME_SCHEMA
+} from "./types.js";
 import { CONDITION_SCHEMA } from "./conditions.js";
 
 export const ACTION_CONDITIONAL_SCHEMA = z.object({
@@ -58,6 +65,52 @@ export const ACTION_CHANGE_MAX_HEALTH_SCHEMA = z.object({
     heal: z.boolean().default(false)
 });
 
+export const ACTION_PARKOUR_CHECKPOINT_SCHEMA = z.object({
+    type: z.literal("PARKOUR_CHECKPOINT")
+});
+
+export const ACTION_GIVE_ITEM_SCHEMA = z.object({
+    type: z.literal("GIVE_ITEM"),
+    item: NBT_SCHEMA,
+    allowMultiple: z.boolean().default(false),
+    slot: INVENTORY_SLOT_SCHEMA,
+    replace: z.boolean().default(false)
+});
+
+export const ACTION_REMOVE_ITEM_SCHEMA = z.object({
+    type: z.literal("GIVE_ITEM"),
+    item: NBT_SCHEMA
+});
+
+export const ACTION_MESSAGE_SCHEMA = z.object({
+    type: z.literal("MESSAGE"),
+    message: z.string().default("Hello World!")
+});
+
+export const ACTION_APPLY_POTION_EFFECT_SCHEMA = z.object({
+    type: z.literal("APPLY_POTION_EFFECT"),
+    effect: POTION_EFFECT_SCHEMA,
+    duration: z.coerce.number().int()
+        .min(1).max(2592000)
+        .default(60),
+    level: z.coerce.number().int()
+        .min(1).max(10)
+        .default(1),
+    override: z.boolean().default(false),
+    showIcon: z.boolean().default(true)
+});
+
+export const ACTION_CLEAR_POTION_EFFECTS_SCHEMA = z.object({
+    type: z.literal("CLEAR_POTION_EFFECTS")
+});
+
+export const ACTION_GIVE_EXPERIENCE_LEVELS_SCHEMA = z.object({
+    type: z.literal("GIVE_EXPERIENCE_LEVELS"),
+    amount: z.coerce.number().int()
+        .min(1).max(10000000) // i dont know the actual max
+        .default(1)
+});
+
 export const ACTION_CHANGE_STAT_SCHEMA = z.object({
     type: z.literal("CHANGE_STAT"),
     stat: STAT_NAME_SCHEMA,
@@ -89,11 +142,6 @@ export const ACTION_CHANGE_HEALTH_SCHEMA = z.object({
         .default(20)
 });
 
-export const ACTION_MESSAGE_SCHEMA = z.object({
-    type: z.literal("MESSAGE"),
-    message: z.string().default("Hello World!")
-});
-
 export const ACTION_RANDOM_SCHEMA = z.object({
     type: z.literal("RANDOM"),
     actions: z.lazy(() => ACTION_LIMITED_SCHEMA).array().default([]),
@@ -120,6 +168,10 @@ export const ACTION_TELEPORT_SCHEMA = z.object({
     location: LOCATION_SCHEMA
 });
 
+export const ACTION_EXIT_SCHEMA = z.object({
+    type: z.literal("EXIT"),
+});
+
 export const ACTION_SCHEMA = z.discriminatedUnion("type", [
     ACTION_CONDITIONAL_SCHEMA,
     ACTION_SET_GROUP_SCHEMA,
@@ -136,7 +188,8 @@ export const ACTION_SCHEMA = z.discriminatedUnion("type", [
     ACTION_MESSAGE_SCHEMA,
     ACTION_RANDOM_SCHEMA,
     ACTION_SET_VELOCITY_SCHEMA,
-    ACTION_TELEPORT_SCHEMA
+    ACTION_TELEPORT_SCHEMA,
+    ACTION_EXIT_SCHEMA,
 ]);
 
 export const ACTION_LIMITED_SCHEMA = z.discriminatedUnion("type", [
@@ -152,6 +205,7 @@ export const ACTION_LIMITED_SCHEMA = z.discriminatedUnion("type", [
     ACTION_CHANGE_TEAM_STAT_SCHEMA,
     ACTION_CHANGE_HEALTH_SCHEMA,
     ACTION_MESSAGE_SCHEMA,
+    ACTION_EXIT_SCHEMA,
 ]);
 
 export type ActionInput = z.input<typeof ACTION_SCHEMA>;

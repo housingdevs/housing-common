@@ -91,3 +91,7 @@ export function isValidPlaceholder(
             addIssueInvalidPlaceholder();
     }
 }
+
+export function isValidNbt(nbt: string): boolean {
+    return true;
+}
