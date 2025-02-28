@@ -1,5 +1,6 @@
 import type { RefinementCtx } from "zod";
 import { span } from "./types/Span.js";
+import type { Action } from "./actions/actions.js";
 
 export function isValidNumericalPlaceholder(value: string, ctx: RefinementCtx): void {
     isValidPlaceholder(value, ctx, true);
@@ -94,4 +95,45 @@ export function isValidPlaceholder(
 
 export function isValidNbt(nbt: string): boolean {
     return true;
+}
+
+export function iter(
+    actions: Action[],
+    block: (action: Action) => void
+) {
+    for (const action of actions) {
+        block(action);
+
+        if (action.type === "CONDITIONAL") {
+            iter(action.ifActions, block);
+            iter(action.elseActions, block);
+        }
+
+        if (action.type === "RANDOM") {
+            iter(action.actions, block);
+        }
+    }
+}
+
+export const ACTION_NAMES: {
+    [key in Action["type"]]: string
+} = {
+    CONDITIONAL: "Conditional",
+    SET_GROUP: "Set Group",
+    KILL: "Kill",
+    HEAL: "Heal",
+    TITLE: "Display Title",
+    ACTION_BAR: "Action Bar",
+    RESET_INVENTORY: "Reset Inventory",
+    CHANGE_MAX_HEALTH: "Change Max Health",
+    CHANGE_STAT: "Change Stat",
+    CHANGE_GLOBAL_STAT: "Change Global Stat",
+    CHANGE_TEAM_STAT: "Change Team Stat",
+    CHANGE_HEALTH: "Change Health",
+    MESSAGE: "Message",
+    EXIT: "Exit",
+    RANDOM: "Random",
+    SET_VELOCITY: "Set Velocity",
+    TELEPORT: "Teleport",
+    CANCEL_EVENT: "Cancel Event"
 }

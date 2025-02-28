@@ -172,6 +172,10 @@ export const ACTION_EXIT_SCHEMA = z.object({
     type: z.literal("EXIT"),
 });
 
+export const ACTION_CANCEL_EVENT_SCHEMA = z.object({
+    type: z.literal("CANCEL_EVENT"),
+});
+
 export const ACTION_SCHEMA = z.discriminatedUnion("type", [
     ACTION_CONDITIONAL_SCHEMA,
     ACTION_SET_GROUP_SCHEMA,
@@ -190,6 +194,7 @@ export const ACTION_SCHEMA = z.discriminatedUnion("type", [
     ACTION_SET_VELOCITY_SCHEMA,
     ACTION_TELEPORT_SCHEMA,
     ACTION_EXIT_SCHEMA,
+    ACTION_CANCEL_EVENT_SCHEMA,
 ]);
 
 export const ACTION_LIMITED_SCHEMA = z.discriminatedUnion("type", [
