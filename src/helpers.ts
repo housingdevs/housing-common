@@ -3,6 +3,13 @@ import type { Action } from "./types/actions.js";
 export const ACTION_NAMES: {
     [key in Action["type"]]: string
 } = {
+    APPLY_POTION_EFFECT: "",
+    CLEAR_POTION_EFFECTS: "",
+    FAIL_PARKOUR: "",
+    GIVE_EXPERIENCE_LEVELS: "",
+    GIVE_ITEM: "",
+    REMOVE_ITEM: "",
+    SEND_TO_LOBBY: "",
     CONDITIONAL: "Conditional",
     SET_GROUP: "Set Group",
     KILL: "Kill",
