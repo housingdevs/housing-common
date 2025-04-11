@@ -18,7 +18,8 @@ export type StatName = string;
 
 export type Location =
 	| { type: "LOCATION_CUSTOM" }
-	| { type: "LOCATION_SPAWN" };
+	| { type: "LOCATION_SPAWN" }
+	| { type: "LOCATION_INVOKERS" };
 
 export type Gamemode =
 	| "survival"
@@ -45,3 +46,8 @@ export type Event = "Player Join" | "Player Quit" | "Player Death" | "Player Kil
 export type Lobby = "Main Lobby" | "Tournament Hall" | "Blitz SG" | "The TNT Games" | "Mega Walls" | "Arcade Games"
 	| "Cops and Crims" | "UHC Champions" | "Warlords" | "Smash Heroes" | "Housing" | "SkyWars" | "Speed UHC"
 	| "Classic Games" | "Prototype" | "Bed Wars" | "Murder Mystery" | "Build Battle" | "Duels" | "Wool Games";
+
+export type Enchantment = "Protection" | "Fire Protection" | "Feather Falling" | "Blast Protection"
+	| "Projectile Projection" | "Respiration" | "Aqua Affinity" | "Thorns" | "Depth Strider" | "Sharpness" | "Smite"
+	| "Bane Of Arthropods" | "Knockback" | "Fire Aspect" | "Looting" | "Efficiency" | "Silk Touch" | "Unbreaking"
+	| "Fortune" | "Power" | "Punch" | "Flame" | "Infinity" | "Luck Of The Sea" | "Lure";

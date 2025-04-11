@@ -1,12 +1,12 @@
 import type { Condition } from "./conditions.js";
 import type {
-    Amount,
+    Amount, Enchantment, Gamemode,
     InventorySlot, Lobby,
     Location,
     Nbt,
     Operation,
     PotionEffect,
-    StatName
+    StatName,
 } from "./types.js";
 
 export type ActionConditional = {
@@ -121,16 +121,32 @@ export type ActionFailParkour = {
     message: string,
 };
 
-export type ActionChangeTeamStat = {
-    type: "CHANGE_TEAM_STAT",
-    stat: StatName,
-    team: string,
-    op: Operation,
-    amount: Amount,
+export type ActionPlaySound = {
+    type: "PLAY_SOUND",
+    sound: string,
+    volume: number,
+    pitch: number,
+    location: Location
+};
+
+export type ActionSetCompassTarget = {
+    type: "SET_COMPASS_TARGET",
+    location: Location
+};
+
+export type ActionSetGamemode = {
+    type: "SET_GAMEMODE",
+    gamemode: Gamemode,
 };
 
 export type ActionChangeHealth = {
     type: "CHANGE_HEALTH",
+    op: Operation,
+    amount: Amount,
+};
+
+export type ActionChangeHunger = {
+    type: "CHANGE_HUNGER",
     op: Operation,
     amount: Amount,
 };
@@ -140,11 +156,67 @@ export type ActionRandom = {
     actions: Action[],
 };
 
+export type ActionFunction = {
+    type: "FUNCTION",
+    function: string,
+    global: boolean,
+}
+
+export type ActionApplyInventoryLayout = {
+    type: "APPLY_INVENTORY_LAYOUT",
+    layout: string,
+};
+
+export type ActionEnchantHeldItem = {
+    type: "ENCHANT_HELD_ITEM",
+    enchantment: Enchantment,
+    level: number,
+};
+
+export type ActionPauseExecution = {
+    type: "PAUSE",
+    ticks: number,
+};
+
+export type ActionSetTeam = {
+    type: "SET_TEAM",
+    team: string,
+}
+
+export type ActionChangeTeamStat = {
+    type: "CHANGE_TEAM_STAT",
+    stat: StatName,
+    team: string,
+    op: Operation,
+    amount: Amount,
+};
+
+export type ActionDisplayMenu = {
+    type: "SET_MENU",
+    menu: string,
+};
+
+export type ActionDropItem = {
+    type: "DROP_ITEM",
+    item: Nbt,
+    location: Location,
+    dropNaturally: boolean,
+    disableMerging: boolean,
+    prioritizePlayer: boolean,
+    inventoryFallback: boolean,
+};
+
 export type ActionSetVelocity = {
     type: "SET_VELOCITY",
     x: Amount,
     y: Amount,
     z: Amount,
+};
+
+export type ActionLaunch = {
+    type: "LAUNCH",
+    location: Location,
+    strength: number,
 };
 
 export type ActionExit = {
@@ -175,10 +247,22 @@ export type Action =
     | ActionChangeGlobalStat
     | ActionTeleport
     | ActionFailParkour
-
-    | ActionChangeTeamStat
+    | ActionPlaySound
+    | ActionSetCompassTarget
+    | ActionSetGamemode
     | ActionChangeHealth
+    | ActionChangeHunger
     | ActionRandom
+    | ActionFunction
+    | ActionApplyInventoryLayout
+    | ActionEnchantHeldItem
+    | ActionPauseExecution
+    | ActionSetTeam
+    | ActionChangeTeamStat
+    | ActionDisplayMenu
+    | ActionDropItem
     | ActionSetVelocity
+    | ActionLaunch
+
     | ActionExit
     | ActionCancelEvent;
