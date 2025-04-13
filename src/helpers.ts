@@ -1,123 +1,15 @@
-import type { RefinementCtx } from "zod";
-import { span } from "./types/Span.js";
-import type { Action } from "./actions/actions.js";
-
-export function isValidNumericalPlaceholder(value: string, ctx: RefinementCtx): void {
-    isValidPlaceholder(value, ctx, true);
-}
-
-export function isValidPlaceholder(
-    value: string,
-    ctx: RefinementCtx,
-    numerical: boolean = false
-): void {
-    if (!(value.startsWith("%") && value.endsWith("%"))) {
-        ctx.addIssue({
-            code: "custom",
-            message: "Invalid amount",
-        });
-    }
-
-    const stripped = value.substring(1, value.length - 1);
-
-    const index = stripped.indexOf("/");
-    const name = stripped.substring(0, index == -1 ? stripped.length : index);
-    const args = index == -1 ? [] : stripped.substring(index + 1).split(" ");
-
-    function addIssueInvalidPlaceholder() {
-        ctx.addIssue({
-            code: "custom",
-            message: "Invalid placeholder",
-            params: { span: span(0, value.length - 1) }
-        });
-    }
-
-    function addIssueInvalidArgument(message: string) {
-        const lo = index == -1 ? value.length - 1 : index + 1;
-        ctx.addIssue({
-            code: "custom",
-            message,
-            params: { span: span(lo, value.length - 1) }
-        });
-    }
-
-    switch (name) {
-        case "server.name":
-        case "server.shortname":
-        case "player.name":
-        case "player.version":
-        case "player.gamemode":
-        case "player.region.name":
-        case "player.group.name":
-        case "player.group.tag":
-        case "player.group.color":
-        case "player.team.name":
-        case "player.team.tag":
-        case "player.team.color":
-        case "player.parkour.formatted":
-        case "house.name":
-        case "house.visitingrules":
-            if (args.length > 0) addIssueInvalidArgument("No arguments expected");
-            if (numerical) addIssueInvalidPlaceholder();
-            break;
-        case "player.ping":
-        case "player.health":
-        case "player.maxhealth":
-        case "player.hunger":
-        case "player.experience":
-        case "player.level":
-        case "player.protocol":
-        case "player.location.x":
-        case "player.location.y":
-        case "player.location.z":
-        case "player.location.pitch":
-        case "player.location.yaw":
-        case "player.group.priority":
-        case "player.parkour.ticks":
-        case "house.guests":
-        case "house.cookies":
-        case "house.players":
-            if (args.length > 0) addIssueInvalidArgument("No arguments expected");
-            break;
-        case "stat.player":
-        case "stat.global":
-            if (args.length == 0) addIssueInvalidArgument("Expected stat key");
-            break;
-        case "stat.team":
-            if (args.length == 0) addIssueInvalidArgument("Expected stat key");
-            if (args.length == 1) addIssueInvalidArgument("Expected team name");
-            if (args.length > 2) addIssueInvalidArgument("Team stat key cannot contain spaces");
-            break;
-        default:
-            addIssueInvalidPlaceholder();
-    }
-}
-
-export function isValidNbt(nbt: string): boolean {
-    return true;
-}
-
-export function iter(
-    actions: Action[],
-    block: (action: Action) => void
-) {
-    for (const action of actions) {
-        block(action);
-
-        if (action.type === "CONDITIONAL") {
-            iter(action.ifActions, block);
-            iter(action.elseActions, block);
-        }
-
-        if (action.type === "RANDOM") {
-            iter(action.actions, block);
-        }
-    }
-}
+import type { Action } from "./types/actions.js";
 
 export const ACTION_NAMES: {
     [key in Action["type"]]: string
 } = {
+    APPLY_POTION_EFFECT: "",
+    CLEAR_POTION_EFFECTS: "",
+    FAIL_PARKOUR: "",
+    GIVE_EXPERIENCE_LEVELS: "",
+    GIVE_ITEM: "",
+    REMOVE_ITEM: "",
+    SEND_TO_LOBBY: "",
     CONDITIONAL: "Conditional",
     SET_GROUP: "Set Group",
     KILL: "Kill",
@@ -135,5 +27,276 @@ export const ACTION_NAMES: {
     RANDOM: "Random",
     SET_VELOCITY: "Set Velocity",
     TELEPORT: "Teleport",
-    CANCEL_EVENT: "Cancel Event"
+    CANCEL_EVENT: "Cancel Event",
+    PLAY_SOUND: "",
+    SET_COMPASS_TARGET: "",
+    SET_GAMEMODE: "",
+    CHANGE_HUNGER: "",
+    FUNCTION: "",
+    APPLY_INVENTORY_LAYOUT: "",
+    ENCHANT_HELD_ITEM: "",
+    PAUSE: "",
+    SET_TEAM: "",
+    SET_MENU: "",
+    DROP_ITEM: "",
+    LAUNCH: ""
 }
+
+export const SOUNDS = [
+    { name: "Ambience Cave", path: "ambient.cave.cave" },
+    { name: "Ambience Rain", path: "ambient.weather.rain" },
+    { name: "Ambience Thunder", path: "ambient.weather.thunder" },
+    { name: "Anvil Break", path: "random.anvil_break" },
+    { name: "Anvil Land", path: "random.anvil_land" },
+    { name: "Anvil Use", path: "random.anvil_use" },
+    { name: "Arrow Hit", path: "random.bowhit" },
+    { name: "Burp", path: "random.burp" },
+    { name: "Chest Close", path: "random.chestclosed" },
+    { name: "Chest Open", path: "random.chestopen" },
+    { name: "Click", path: "random.click" },
+    { name: "Door Close", path: "random.door_close" },
+    { name: "Door Open", path: "random.door_open" },
+    { name: "Drink", path: "random.drink" },
+    { name: "Eat", path: "random.eat" },
+    { name: "Explode", path: "random.explode" },
+    { name: "Fall Big", path: "game.player.hurt.fall.big" },
+    { name: "Fall Small", path: "game.player.hurt.fall.small" },
+    { name: "Fizz", path: "random.fizz" },
+    { name: "Fuse", path: "game.tnt.primed" },
+    { name: "Glass", path: "dig.glass" },
+    { name: "Hurt Flesh", path: "game.player.hurt" },
+    { name: "Item Break", path: "random.break" },
+    { name: "Item Pickup", path: "random.pop" },
+    { name: "Lava Pop", path: "liquid.lavapop" },
+    { name: "Level Up", path: "random.levelup" },
+    { name: "Note Bass", path: "note.bass" },
+    { name: "Note Piano", path: "note.harp" },
+    { name: "Note Bass Drum", path: "note.bd" },
+    { name: "Note Sticks", path: "note.hat" },
+    { name: "Note Bass Guitar", path: "note.bassattack" },
+    { name: "Note Snare Drum", path: "note.snare" },
+
+    { name: "Note Pling", path: "note.pling" },
+
+    { name: "Orb Pickup", path: "random.orb" },
+    { name: "Shoot Arrow", path: "random.bow" },
+    { name: "Splash", path: "game.player.swim.splash" },
+    { name: "Swim", path: "game.player.swim" },
+    { name: "Wood Click", path: "random.wood_click" },
+
+    { name: "Bat Death", path: "mob.bat.death" },
+    { name: "Bat Hurt", path: "mob.bat.hurt" },
+    { name: "Bat Idle", path: "mob.bat.idle" },
+    { name: "Bat Loop", path: "mob.bat.loop" },
+    { name: "Bat Takeoff", path: "mob.bat.takeoff" },
+    { name: "Blaze Breath", path: "mob.blaze.breathe" },
+    { name: "Blaze Death", path: "mob.blaze.death" },
+    { name: "Blaze Hit", path: "mob.blaze.hit" },
+    { name: "Cat Hiss", path: "mob.cat.hiss" },
+    { name: "Cat Hit", path: "mob.cat.hitt" },
+    { name: "Cat Meow", path: "mob.cat.meow" },
+    { name: "Cat Purr", path: "mob.cat.purr" },
+    { name: "Cat Purreow", path: "mob.cat.purreow" },
+    { name: "Chicken Idle", path: "mob.chicken.say" },
+    { name: "Chicken Hurt", path: "mob.chicken.hurt" },
+    { name: "Chicken Egg Pop", path: "mob.chicken.plop" },
+    { name: "Chicken Walk", path: "mob.chicken.step" },
+    { name: "Cow Idle", path: "mob.cow.say" },
+    { name: "Cow Hurt", path: "mob.cow.hurt" },
+    { name: "Cow Walk", path: "mob.cow.step" },
+    { name: "Creeper Hiss", path: "mob.creeper.say" },
+    { name: "Creeper Death", path: "mob.creeper.death" },
+    { name: "Enderdragon Death", path: "mob.enderdragon.end" },
+    { name: "Enderdragon Growl", path: "mob.enderdragon.growl" },
+    { name: "Enderdragon Hit", path: "mob.enderdragon.hit" },
+    { name: "Enderdragon Wings", path: "mob.enderdragon.wings" },
+    { name: "Enderman Death", path: "mob.endermen.death" },
+    { name: "Enderman Hit", path: "mob.endermen.hit" },
+    { name: "Enderman Idle", path: "mob.endermen.idle" },
+    { name: "Enderman Teleport", path: "mob.endermen.portal" },
+    { name: "Enderman Scream", path: "mob.endermen.scream" },
+    { name: "Enderman Stare", path: "mob.endermen.stare" },
+
+    { name: "Ghast Scream", path: "mob.ghast.scream" },
+    { name: "Ghast Scream2", path: "mob.ghast.affectionate_scream" },
+    { name: "Ghast Charge", path: "mob.ghast.charge" },
+    { name: "Ghast Death", path: "mob.ghast.death" },
+    { name: "Ghast Fireball", path: "mob.ghast.fireball" },
+    { name: "Ghast Moan", path: "mob.ghast.moan" },
+
+    { name: "Guardian Hit", path: "mob.guardian.hit" },
+    { name: "Guardian Idle", path: "mob.guardian.idle" },
+    { name: "Guardian Death", path: "mob.guardian.death" },
+    { name: "Guardian Elder Hit", path: "mob.guardian.elder.hit" },
+    { name: "Guardian Elder Idle", path: "mob.guardian.elder.idle" },
+    { name: "Guardian Elder Death", path: "mob.guardian.elder.death" },
+    { name: "Guardian Land Hit", path: "mob.guardian.land.hit" },
+    { name: "Guardian Land Idle", path: "mob.guardian.land.idle" },
+    { name: "Guardian Land Death", path: "mob.guardian.land.death" },
+    { name: "Guardian Curse", path: "mob.guardian.curse" },
+    { name: "Guardian Attack", path: "mob.guardian.attack" },
+    { name: "Guardian Flop", path: "mob.guardian.flop" },
+
+    { name: "Irongolem Death", path: "mob.irongolem.death" },
+    { name: "Irongolem Hit", path: "mob.irongolem.hit" },
+    { name: "Irongolem Throw", path: "mob.irongolem.throw" },
+    { name: "Irongolem Walk", path: "mob.irongolem.walk" },
+
+    { name: "Magmacube Walk", path: "mob.magmacube.small" },
+    { name: "Magmacube Walk2", path: "mob.magmacube.big" },
+    { name: "Magmacube Jump", path: "mob.magmacube.jump" },
+
+    { name: "Pig Idle", path: "mob.pig.say" },
+    { name: "Pig Death", path: "mob.pig.death" },
+    { name: "Pig Walk", path: "mob.pig.step" },
+
+    { name: "Rabbit Ambient", path: "mob.rabbit.idle" },
+    { name: "Rabbit Death", path: "mob.rabbit.death" },
+    { name: "Rabbit Hurt", path: "mob.rabbit.hurt" },
+    { name: "Rabbit Jump", path: "mob.rabbit.hop" },
+
+    { name: "Sheep Idle", path: "mob.sheep.say" },
+    { name: "Sheep Shear", path: "mob.sheep.shear" },
+    { name: "Sheep Walk", path: "mob.sheep.step" },
+
+    { name: "Silverfish Hit", path: "mob.silverfish.hit" },
+    { name: "Silverfish Kill", path: "mob.silverfish.kill" },
+    { name: "Silverfish Idle", path: "mob.silverfish.say" },
+    { name: "Silverfish Walk", path: "mob.silverfish.step" },
+
+    { name: "Skeleton Idle", path: "mob.skeleton.say" },
+    { name: "Skeleton Death", path: "mob.skeleton.death" },
+    { name: "Skeleton Hurt", path: "mob.skeleton.hurt" },
+    { name: "Skeleton Walk", path: "mob.skeleton.step" },
+
+    { name: "Slime Attack", path: "mob.slime.attack" },
+    { name: "Slime Walk", path: "mob.slime.small" },
+    { name: "Slime Walk2", path: "mob.slime.big" },
+
+    { name: "Spider Idle", path: "mob.spider.say" },
+    { name: "Spider Death", path: "mob.spider.death" },
+    { name: "Spider Walk", path: "mob.spider.step" },
+
+    { name: "Wither Death", path: "mob.wither.death" },
+    { name: "Wither Hurt", path: "mob.wither.hurt" },
+    { name: "Wither Idle", path: "mob.wither.idle" },
+    { name: "Wither Shoot", path: "mob.wither.shoot" },
+    { name: "Wither Spawn", path: "mob.wither.spawn" },
+
+    { name: "Wolf Bark", path: "mob.wolf.bark" },
+    { name: "Wolf Death", path: "mob.wolf.death" },
+    { name: "Wolf Growl", path: "mob.wolf.growl" },
+    { name: "Wolf Howl", path: "mob.wolf.howl" },
+    { name: "Wolf Hurt", path: "mob.wolf.hurt" },
+    { name: "Wolf Pant", path: "mob.wolf.panting" },
+    { name: "Wolf Shake", path: "mob.wolf.shake" },
+    { name: "Wolf Walk", path: "mob.wolf.step" },
+    { name: "Wolf Whine", path: "mob.wolf.whine" },
+
+    { name: "Zombie Metal", path: "mob.zombie.metal" },
+    { name: "Zombie Wood", path: "mob.zombie.wood" },
+    { name: "Zombie Woodbreak", path: "mob.zombie.woodbreak" },
+    { name: "Zombie Idle", path: "mob.zombie.say" },
+    { name: "Zombie Death", path: "mob.zombie.death" },
+    { name: "Zombie Hurt", path: "mob.zombie.hurt" },
+    { name: "Zombie Infect", path: "mob.zombie.infect" },
+    { name: "Zombie Unfect", path: "mob.zombie.unfect" },
+    { name: "Zombie Remedy", path: "mob.zombie.remedy" },
+    { name: "Zombie Walk", path: "mob.zombie.step" },
+    { name: "Zombie Pig Idle", path: "mob.zombiepig.zpig" },
+    { name: "Zombie Pig Angry", path: "mob.zombiepig.zpigangry" },
+    { name: "Zombie Pig Death", path: "mob.zombiepig.zpigdeath" },
+    { name: "Zombie Pig Hurt", path: "mob.zombiepig.zpighurt" },
+
+    { name: "Firework Blast", path: "fireworks.blast" },
+    { name: "Firework Blast2", path: "fireworks.blast_far" },
+    { name: "Firework Large Blast", path: "fireworks.largeBlast" },
+    { name: "Firework Large Blast2", path: "fireworks.largeBlast_far" },
+    { name: "Firework Twinkle", path: "fireworks.twinkle" },
+    { name: "Firework Twinkle2", path: "fireworks.twinkle_far" },
+    { name: "Firework Launch", path: "fireworks.launch" },
+
+    { name: "Fireworks Blast", path: "fireworks.blast" },
+    { name: "Fireworks Blast2", path: "fireworks.blast_far" },
+    { name: "Fireworks Large Blast", path: "fireworks.largeBlast" },
+    { name: "Fireworks Large Blast2", path: "fireworks.largeBlast_far" },
+    { name: "Fireworks Twinkle", path: "fireworks.twinkle" },
+    { name: "Fireworks Twinkle2", path: "fireworks.twinkle_far" },
+    { name: "Fireworks Launch", path: "fireworks.launch" },
+
+    { name: "Successful Hit", path: "random.successful_hit" },
+
+    { name: "Horse Angry", path: "mob.horse.angry" },
+    { name: "Horse Armor", path: "mob.horse.armor" },
+    { name: "Horse Breathe", path: "mob.horse.breathe" },
+    { name: "Horse Death", path: "mob.horse.death" },
+    { name: "Horse Gallop", path: "mob.horse.gallop" },
+    { name: "Horse Hit", path: "mob.horse.hit" },
+    { name: "Horse Idle", path: "mob.horse.idle" },
+    { name: "Horse Jump", path: "mob.horse.jump" },
+    { name: "Horse Land", path: "mob.horse.land" },
+    { name: "Horse Saddle", path: "mob.horse.leather" },
+    { name: "Horse Soft", path: "mob.horse.soft" },
+    { name: "Horse Wood", path: "mob.horse.wood" },
+    { name: "Donkey Angry", path: "mob.horse.donkey.angry" },
+    { name: "Donkey Death", path: "mob.horse.donkey.death" },
+    { name: "Donkey Hit", path: "mob.horse.donkey.hit" },
+    { name: "Donkey Idle", path: "mob.horse.donkey.idle" },
+    { name: "Horse Skeleton Death", path: "mob.horse.skeleton.death" },
+    { name: "Horse Skeleton Hit", path: "mob.horse.skeleton.hit" },
+    { name: "Horse Skeleton Idle", path: "mob.horse.skeleton.idle" },
+    { name: "Horse Zombie Death", path: "mob.horse.zombie.death" },
+    { name: "Horse Zombie Hit", path: "mob.horse.zombie.hit" },
+    { name: "Horse Zombie Idle", path: "mob.horse.zombie.idle" },
+
+    { name: "Villager Death", path: "mob.villager.death" },
+    { name: "Villager Haggle", path: "mob.villager.haggle" },
+    { name: "Villager Hit", path: "mob.villager.hit" },
+    { name: "Villager Idle", path: "mob.villager.idle" },
+    { name: "Villager No", path: "mob.villager.no" },
+    { name: "Villager Yes", path: "mob.villager.yes" },
+] as const;
+
+export const POTION_EFFECTS = [
+    "Speed", "Slowness", "Haste", "Mining Fatigue", "Strength", "Instant Health", "Instant Damage", "Jump Boost",
+    "Nausea", "Regeneration", "Resistance", "Fire Resistance", "Water Breathing", "Invisibility", "Blindness",
+    "Night Vision", "Hunger", "Weakness", "Poison", "Wither", "Health Boost", "Absorption",
+] as const;
+
+export const EVENTS = [
+    "Player Join", "Player Quit", "Player Death", "Player Kill", "Player Respawn", "Group Change", "PvP State Change",
+    "Fish Caught", "Player Enter Portal", "Player Damage", "Player Block Break", "Start Parkour", "Complete Parkour",
+    "Player Drop Item", "Player Pick Up Item", "Player Change Held Item", "Player Toggle Sneak", "Player Toggle Flight",
+] as const;
+
+export const LOBBIES = [
+    "Main Lobby", "Tournament Hall", "Blitz SG", "The TNT Games", "Mega Walls", "Arcade Games", "Cops and Crims",
+    "UHC Champions", "Warlords", "Smash Heroes", "Housing", "SkyWars", "Speed UHC", "Classic Games", "Prototype",
+    "Bed Wars", "Murder Mystery", "Build Battle", "Duels", "Wool Games",
+] as const;
+
+export const ENCHANTMENTS = [
+    "Protection", "Fire Protection", "Feather Falling", "Blast Protection", "Projectile Projection", "Respiration",
+    "Aqua Affinity", "Thorns", "Depth Strider", "Sharpness", "Smite", "Bane Of Arthropods", "Knockback", "Fire Aspect",
+    "Looting", "Efficiency", "Silk Touch", "Unbreaking", "Fortune", "Power", "Punch", "Flame", "Infinity",
+    "Luck Of The Sea", "Lure",
+] as const;
+
+export const PERMISSIONS = [
+    "Fly", "Wood Door", "Iron Door", "Wood Trap Door", "Iron Trap Door", "Fence Gate", "Button", "Lever",
+    "Use Launch Pads", "/tp", "/tp Other Players", "Jukebox", "Kick", "Ban", "Mute", "Pet Spawning", "Build",
+    "Offline Build", "Fluid", "Pro Tools", "Use Chests", "Use Ender Chests", "Item Editor", "Switch Game Mode",
+    "Edit Stats", "Change Player Group", "Change Gamerules", "Housing Menu", "Team Chat Spy", "Edit Actions",
+    "Edit Regions", "Edit Scoreboard", "Edit Event Actions", "Edit Commands", "Edit Functions",
+    "Edit Inventory Layouts", "Edit Teams", "Edit Custom Menus", "Item: Mailbox", "Item: Egg Hunt",
+    "Item: Teleport Pad", "Item: Launch Pad", "Item: Action Pad", "Item: Hologram", "Item: NPCs", "Item: Action Button",
+    "Item: Leaderboard", "Item: Trash Can", "Item: Biome Stick"
+] as const;
+
+export const ITEM_PROPERTIES = [
+    "Item Type", "Metadata"
+] as const;
+
+export const ITEM_LOCATIONS = [
+    "Hand", "Armor", "Hotbar", "Inventory", "Cursor", "Crafting Grid", "Anywhere"
+] as const;
