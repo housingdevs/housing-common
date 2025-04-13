@@ -27,10 +27,22 @@ export const ACTION_NAMES: {
     RANDOM: "Random",
     SET_VELOCITY: "Set Velocity",
     TELEPORT: "Teleport",
-    CANCEL_EVENT: "Cancel Event"
+    CANCEL_EVENT: "Cancel Event",
+    PLAY_SOUND: "",
+    SET_COMPASS_TARGET: "",
+    SET_GAMEMODE: "",
+    CHANGE_HUNGER: "",
+    FUNCTION: "",
+    APPLY_INVENTORY_LAYOUT: "",
+    ENCHANT_HELD_ITEM: "",
+    PAUSE: "",
+    SET_TEAM: "",
+    SET_MENU: "",
+    DROP_ITEM: "",
+    LAUNCH: ""
 }
 
-export const sounds = [
+export const SOUNDS = [
     { name: "Ambience Cave", path: "ambient.cave.cave" },
     { name: "Ambience Rain", path: "ambient.weather.rain" },
     { name: "Ambience Thunder", path: "ambient.weather.thunder" },
@@ -243,4 +255,48 @@ export const sounds = [
     { name: "Villager Idle", path: "mob.villager.idle" },
     { name: "Villager No", path: "mob.villager.no" },
     { name: "Villager Yes", path: "mob.villager.yes" },
-];
+] as const;
+
+export const POTION_EFFECTS = [
+    "Speed", "Slowness", "Haste", "Mining Fatigue", "Strength", "Instant Health", "Instant Damage", "Jump Boost",
+    "Nausea", "Regeneration", "Resistance", "Fire Resistance", "Water Breathing", "Invisibility", "Blindness",
+    "Night Vision", "Hunger", "Weakness", "Poison", "Wither", "Health Boost", "Absorption",
+] as const;
+
+export const EVENTS = [
+    "Player Join", "Player Quit", "Player Death", "Player Kill", "Player Respawn", "Group Change", "PvP State Change",
+    "Fish Caught", "Player Enter Portal", "Player Damage", "Player Block Break", "Start Parkour", "Complete Parkour",
+    "Player Drop Item", "Player Pick Up Item", "Player Change Held Item", "Player Toggle Sneak", "Player Toggle Flight",
+] as const;
+
+export const LOBBIES = [
+    "Main Lobby", "Tournament Hall", "Blitz SG", "The TNT Games", "Mega Walls", "Arcade Games", "Cops and Crims",
+    "UHC Champions", "Warlords", "Smash Heroes", "Housing", "SkyWars", "Speed UHC", "Classic Games", "Prototype",
+    "Bed Wars", "Murder Mystery", "Build Battle", "Duels", "Wool Games",
+] as const;
+
+export const ENCHANTMENTS = [
+    "Protection", "Fire Protection", "Feather Falling", "Blast Protection", "Projectile Projection", "Respiration",
+    "Aqua Affinity", "Thorns", "Depth Strider", "Sharpness", "Smite", "Bane Of Arthropods", "Knockback", "Fire Aspect",
+    "Looting", "Efficiency", "Silk Touch", "Unbreaking", "Fortune", "Power", "Punch", "Flame", "Infinity",
+    "Luck Of The Sea", "Lure",
+] as const;
+
+export const PERMISSIONS = [
+    "Fly", "Wood Door", "Iron Door", "Wood Trap Door", "Iron Trap Door", "Fence Gate", "Button", "Lever",
+    "Use Launch Pads", "/tp", "/tp Other Players", "Jukebox", "Kick", "Ban", "Mute", "Pet Spawning", "Build",
+    "Offline Build", "Fluid", "Pro Tools", "Use Chests", "Use Ender Chests", "Item Editor", "Switch Game Mode",
+    "Edit Stats", "Change Player Group", "Change Gamerules", "Housing Menu", "Team Chat Spy", "Edit Actions",
+    "Edit Regions", "Edit Scoreboard", "Edit Event Actions", "Edit Commands", "Edit Functions",
+    "Edit Inventory Layouts", "Edit Teams", "Edit Custom Menus", "Item: Mailbox", "Item: Egg Hunt",
+    "Item: Teleport Pad", "Item: Launch Pad", "Item: Action Pad", "Item: Hologram", "Item: NPCs", "Item: Action Button",
+    "Item: Leaderboard", "Item: Trash Can", "Item: Biome Stick"
+] as const;
+
+export const ITEM_PROPERTIES = [
+    "Item Type", "Metadata"
+] as const;
+
+export const ITEM_LOCATIONS = [
+    "Hand", "Armor", "Hotbar", "Inventory", "Cursor", "Crafting Grid", "Anywhere"
+] as const;

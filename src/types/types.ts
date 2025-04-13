@@ -1,3 +1,14 @@
+import {
+	ENCHANTMENTS,
+	EVENTS,
+	ITEM_LOCATIONS,
+	ITEM_PROPERTIES,
+	LOBBIES,
+	PERMISSIONS,
+	POTION_EFFECTS,
+	SOUNDS
+} from "../helpers.js";
+
 export type Operation =
 	| "increment"
 	| "decrement"
@@ -17,7 +28,7 @@ export type Amount = bigint | string;
 export type StatName = string;
 
 export type Location =
-	| { type: "LOCATION_CUSTOM" }
+	| { type: "LOCATION_CUSTOM", value: string }
 	| { type: "LOCATION_SPAWN" }
 	| { type: "LOCATION_INVOKERS" };
 
@@ -33,21 +44,12 @@ export type InventorySlot =
 	| "first" | "hand"
 	| number;  // -1 to 39
 
-export type PotionEffect =
-	| "Speed" | "Slowness" | "Haste" | "Mining Fatigue" | "Strength" | "Instant Health" | "Instant Damage" | "Jump Boost"
-	| "Nausea" | "Regeneration" | "Resistance" | "Fire Resistance" | "Water Breathing" | "Invisibility" | "Blindness"
-	| "Night Vision" | "Hunger" | "Weakness" | "Poison" | "Wither" | "Health Boost" | "Absorption";
+export type PotionEffect = (typeof POTION_EFFECTS)[number];
+export type Event = (typeof EVENTS)[number];
+export type Lobby = (typeof LOBBIES)[number];
+export type Enchantment = (typeof ENCHANTMENTS)[number];
+export type Sound = (typeof SOUNDS)[number]["path"];
+export type Permission = (typeof PERMISSIONS)[number];
 
-export type Event = "Player Join" | "Player Quit" | "Player Death" | "Player Kill" | "Player Respawn" | "Group Change"
-	| "PvP State Change" | "Fish Caught" | "Player Enter Portal" | "Player Damage" | "Player Block Break"
-	| "Start Parkour" | "Complete Parkour" | "Player Drop Item" | "Player Pick Up Item" | "Player Change Held Item"
-	| "Player Toggle Sneak" | "Player Toggle Flight";
-
-export type Lobby = "Main Lobby" | "Tournament Hall" | "Blitz SG" | "The TNT Games" | "Mega Walls" | "Arcade Games"
-	| "Cops and Crims" | "UHC Champions" | "Warlords" | "Smash Heroes" | "Housing" | "SkyWars" | "Speed UHC"
-	| "Classic Games" | "Prototype" | "Bed Wars" | "Murder Mystery" | "Build Battle" | "Duels" | "Wool Games";
-
-export type Enchantment = "Protection" | "Fire Protection" | "Feather Falling" | "Blast Protection"
-	| "Projectile Projection" | "Respiration" | "Aqua Affinity" | "Thorns" | "Depth Strider" | "Sharpness" | "Smite"
-	| "Bane Of Arthropods" | "Knockback" | "Fire Aspect" | "Looting" | "Efficiency" | "Silk Touch" | "Unbreaking"
-	| "Fortune" | "Power" | "Punch" | "Flame" | "Infinity" | "Luck Of The Sea" | "Lure";
+export type ItemProperty = (typeof ITEM_PROPERTIES)[number];
+export type ItemLocation = (typeof ITEM_LOCATIONS)[number];

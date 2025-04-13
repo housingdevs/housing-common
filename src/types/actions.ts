@@ -5,7 +5,7 @@ import type {
     Location,
     Nbt,
     Operation,
-    PotionEffect,
+    PotionEffect, Sound,
     StatName,
 } from "./types.js";
 
@@ -61,7 +61,7 @@ export type ActionGiveItem = {
     item: Nbt,
     allowMultiple: boolean,
     slot: InventorySlot,
-    replace: boolean,
+    replaceExisting: boolean,
 };
 
 export type ActionRemoveItem = {
@@ -89,7 +89,7 @@ export type ActionClearPotionEffects = {
 
 export type ActionGiveExperienceLevels = {
     type: "GIVE_EXPERIENCE_LEVELS",
-    amount: number,
+    amount: Amount,
 };
 
 export type ActionSendToLobby = {
@@ -123,7 +123,7 @@ export type ActionFailParkour = {
 
 export type ActionPlaySound = {
     type: "PLAY_SOUND",
-    sound: string,
+    sound: Sound,
     volume: number,
     pitch: number,
     location: Location
@@ -169,7 +169,7 @@ export type ActionApplyInventoryLayout = {
 
 export type ActionEnchantHeldItem = {
     type: "ENCHANT_HELD_ITEM",
-    enchantment: Enchantment,
+    enchant: Enchantment,
     level: number,
 };
 
