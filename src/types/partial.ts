@@ -1,14 +1,10 @@
-import type { Action, ActionChangeStat } from "./actions.js";
+import type { Action } from "./actions.js";
 import type { Condition } from "./conditions.js";
 import type { ActionHolder } from "./holders.js";
 
 export type PartialElement<T extends { type: string }> = {
     [K in keyof T]: K extends "type" ? T[K] : Wrap<T[K]> | undefined | null;
 };
-
-type test<T extends { type: string }> = Omit<T, "type">;
-
-type test2 = test<ActionChangeStat>
 
 export type PartialActionHolder = PartialElement<ActionHolder>;
 export type PartialAction = PartialElement<Action>;

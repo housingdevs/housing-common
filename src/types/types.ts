@@ -10,9 +10,9 @@ import {
 } from "../helpers.js";
 
 export type Operation =
+	| "set"
 	| "increment"
 	| "decrement"
-	| "set"
 	| "multiply"
 	| "divide";
 
@@ -23,14 +23,22 @@ export type Comparison =
 	| "greater_than"
 	| "greater_than_or_equals";
 
-export type Amount = bigint | string;
+export type Value =
+	| bigint
+	| number
+	| string;
 
-export type StatName = string;
+export type VarName = string;
+
+export type VarHolder =
+	| { type: "player" }
+	| { type: "global" }
+	| { type: "team", team: "string" };
 
 export type Location =
-	| { type: "LOCATION_CUSTOM", value: string }
-	| { type: "LOCATION_SPAWN" }
-	| { type: "LOCATION_INVOKERS" };
+	| { type: "location_custom", value: string }
+	| { type: "location_spawn" }
+	| { type: "location_invokers" };
 
 export type Gamemode =
 	| "survival"

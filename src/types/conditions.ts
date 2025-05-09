@@ -1,13 +1,14 @@
 import type {
     Comparison,
-    Amount,
+    Value,
     Gamemode,
-    StatName,
+    VarName,
     Permission,
     Nbt,
     ItemLocation,
     PotionEffect,
-    ItemProperty
+    ItemProperty,
+    VarHolder
 } from "./types.js";
 
 export type ConditionRequireGroup = {
@@ -16,18 +17,13 @@ export type ConditionRequireGroup = {
     includeHigherGroups: boolean,
 };
 
-export type ConditionCompareStat = {
-    type: "COMPARE_STAT",
-    stat: StatName,
+export type ConditionCompareVar = {
+    type: "COMPARE_VAR",
+    holder: VarHolder,
+    var: VarName,
     op: Comparison,
-    amount: Amount,
-};
-
-export type ConditionCompareGlobalStat = {
-    type: "COMPARE_GLOBAL_STAT",
-    stat: StatName,
-    op: Comparison,
-    amount: Amount,
+    amount: Value,
+    fallback: Value
 };
 
 export type ConditionRequirePermission = {
@@ -68,19 +64,19 @@ export type ConditionIsFlying = {
 export type ConditionCompareHealth = {
     type: "COMPARE_HEALTH",
     op: Comparison,
-    amount: Amount,
+    amount: Value,
 };
 
 export type ConditionCompareMaxHealth = {
     type: "COMPARE_MAX_HEALTH",
     op: Comparison,
-    amount: Amount,
+    amount: Value,
 };
 
 export type ConditionCompareHunger = {
     type: "COMPARE_HUNGER",
     op: Comparison,
-    amount: Amount,
+    amount: Value,
 };
 
 export type ConditionRequireGamemode = {
@@ -92,7 +88,7 @@ export type ConditionComparePlaceholder = {
     type: "COMPARE_PLACEHOLDER",
     placeholder: string,
     op: Comparison,
-    amount: Amount,
+    amount: Value,
 };
 
 export type ConditionRequireTeam = {
@@ -100,24 +96,15 @@ export type ConditionRequireTeam = {
     team: string,
 };
 
-export type ConditionCompareTeamStat = {
-    type: "COMPARE_TEAM_STAT",
-    stat: StatName,
-    team: string,
-    op: Comparison,
-    amount: Amount,
-};
-
 export type ConditionCompareDamage = {
     type: "COMPARE_DAMAGE",
     op: Comparison,
-    amount: Amount,
+    amount: Value,
 };
 
 export type Condition = (
     | ConditionRequireGroup
-    | ConditionCompareStat
-    | ConditionCompareGlobalStat
+    | ConditionCompareVar
     | ConditionRequirePermission
     | ConditionIsInRegion
     | ConditionRequireItem
@@ -131,7 +118,6 @@ export type Condition = (
     | ConditionRequireGamemode
     | ConditionComparePlaceholder
     | ConditionRequireTeam
-    | ConditionCompareTeamStat
 
     | ConditionCompareDamage
 ) & { inverted: boolean };

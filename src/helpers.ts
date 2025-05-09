@@ -1,15 +1,15 @@
-import type { Action } from "./types/actions.js";
+import type { Action, ActionHolder, Condition } from "./types";
 
 export const ACTION_NAMES: {
     [key in Action["type"]]: string
 } = {
-    APPLY_POTION_EFFECT: "",
-    CLEAR_POTION_EFFECTS: "",
-    FAIL_PARKOUR: "",
-    GIVE_EXPERIENCE_LEVELS: "",
-    GIVE_ITEM: "",
-    REMOVE_ITEM: "",
-    SEND_TO_LOBBY: "",
+    APPLY_POTION_EFFECT: "Apply Potion Effect",
+    CLEAR_POTION_EFFECTS: "Clear All Potion Effects",
+    FAIL_PARKOUR: "Fail Parkour",
+    GIVE_EXPERIENCE_LEVELS: "Give Experience Levels",
+    GIVE_ITEM: "Give Item",
+    REMOVE_ITEM: "Remove Item",
+    SEND_TO_LOBBY: "Send to Lobby",
     CONDITIONAL: "Conditional",
     SET_GROUP: "Set Group",
     KILL: "Kill",
@@ -18,9 +18,7 @@ export const ACTION_NAMES: {
     ACTION_BAR: "Action Bar",
     RESET_INVENTORY: "Reset Inventory",
     CHANGE_MAX_HEALTH: "Change Max Health",
-    CHANGE_STAT: "Change Stat",
-    CHANGE_GLOBAL_STAT: "Change Global Stat",
-    CHANGE_TEAM_STAT: "Change Team Stat",
+    CHANGE_VAR: "Change Variable",
     CHANGE_HEALTH: "Change Health",
     MESSAGE: "Message",
     EXIT: "Exit",
@@ -28,18 +26,47 @@ export const ACTION_NAMES: {
     SET_VELOCITY: "Set Velocity",
     TELEPORT: "Teleport",
     CANCEL_EVENT: "Cancel Event",
-    PLAY_SOUND: "",
-    SET_COMPASS_TARGET: "",
-    SET_GAMEMODE: "",
-    CHANGE_HUNGER: "",
-    FUNCTION: "",
-    APPLY_INVENTORY_LAYOUT: "",
-    ENCHANT_HELD_ITEM: "",
-    PAUSE: "",
-    SET_TEAM: "",
-    SET_MENU: "",
-    DROP_ITEM: "",
-    LAUNCH: ""
+    PLAY_SOUND: "Play Sound",
+    SET_COMPASS_TARGET: "Set Compass Target",
+    SET_GAMEMODE: "Set Gamemode",
+    CHANGE_HUNGER: "Change Hunger Level",
+    FUNCTION: "Trigger Function",
+    APPLY_INVENTORY_LAYOUT: "Apply Inventory Layout",
+    ENCHANT_HELD_ITEM: "Enchant Held Item",
+    PAUSE: "Pause Execution",
+    SET_TEAM: "Set Player Team",
+    SET_MENU: "Display Menu",
+    DROP_ITEM: "Drop Item",
+    LAUNCH: "Launch to Target"
+}
+
+export const CONDITION_NAMES: {
+    [key in Condition["type"]]: string
+} = {
+    REQUIRE_GROUP: "Required Group",
+    COMPARE_VAR: "Required Variable",
+    REQUIRE_PERMISSION: "Required Permission",
+    IS_IN_REGION: "Within Region",
+    REQUIRE_ITEM: "Has Item",
+    IS_DOING_PARKOUR: "Doing Parkour",
+    REQUIRE_POTION_EFFECT: "Has Potion Effect",
+    IS_SNEAKING: "Player Sneaking",
+    IS_FLYING: "Player Flying",
+    COMPARE_HEALTH: "Player Health",
+    COMPARE_MAX_HEALTH: "Max Player Health",
+    COMPARE_HUNGER: "Player Hunger",
+    REQUIRE_GAMEMODE: "Required Gamemode",
+    COMPARE_PLACEHOLDER: "Placeholder Number Requirement",
+    REQUIRE_TEAM: "Required Team",
+    COMPARE_DAMAGE: "Damage Requirement"
+}
+
+export const ACTION_HOLDER_NAMES: {
+    [key in ActionHolder["type"]]: string
+} = {
+    FUNCTION: "Function",
+    UNKNOWN: "Actions",
+    EVENT: "Event"
 }
 
 export const SOUNDS = [
