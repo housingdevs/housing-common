@@ -1,12 +1,12 @@
 import type { Condition } from "./conditions.js";
 import type {
-    Amount, Enchantment, Gamemode,
+    Value, Enchantment, Gamemode,
     InventorySlot, Lobby,
     Location,
     Nbt,
     Operation,
     PotionEffect, Sound,
-    StatName,
+    VarName, VarHolder,
 } from "./types.js";
 
 export type ActionConditional = {
@@ -52,7 +52,7 @@ export type ActionResetInventory = {
 export type ActionChangeMaxHealth = {
     type: "CHANGE_MAX_HEALTH",
     op: Operation,
-    amount: Amount,
+    amount: Value,
     heal: boolean,
 };
 
@@ -89,7 +89,7 @@ export type ActionClearPotionEffects = {
 
 export type ActionGiveExperienceLevels = {
     type: "GIVE_EXPERIENCE_LEVELS",
-    amount: Amount,
+    amount: Value,
 };
 
 export type ActionSendToLobby = {
@@ -97,19 +97,17 @@ export type ActionSendToLobby = {
     lobby: Lobby,
 };
 
-export type ActionChangeStat = {
-    type: "CHANGE_STAT",
-    stat: StatName,
+export type ActionChangeVar = {
+    type: "CHANGE_VAR",
+    holder: VarHolder,
+    var: VarName,
+} & ({
+    op: "unset"
+} | {
     op: Operation,
-    amount: Amount,
-};
-
-export type ActionChangeGlobalStat = {
-    type: "CHANGE_GLOBAL_STAT",
-    stat: StatName,
-    op: Operation,
-    amount: Amount,
-};
+    value: Value,
+    unset: boolean,
+});
 
 export type ActionTeleport = {
     type: "TELEPORT",
@@ -142,13 +140,13 @@ export type ActionSetGamemode = {
 export type ActionChangeHealth = {
     type: "CHANGE_HEALTH",
     op: Operation,
-    amount: Amount,
+    amount: Value,
 };
 
 export type ActionChangeHunger = {
     type: "CHANGE_HUNGER",
     op: Operation,
-    amount: Amount,
+    amount: Value,
 };
 
 export type ActionRandom = {
@@ -183,14 +181,6 @@ export type ActionSetTeam = {
     team: string,
 }
 
-export type ActionChangeTeamStat = {
-    type: "CHANGE_TEAM_STAT",
-    stat: StatName,
-    team: string,
-    op: Operation,
-    amount: Amount,
-};
-
 export type ActionDisplayMenu = {
     type: "SET_MENU",
     menu: string,
@@ -208,9 +198,9 @@ export type ActionDropItem = {
 
 export type ActionSetVelocity = {
     type: "SET_VELOCITY",
-    x: Amount,
-    y: Amount,
-    z: Amount,
+    x: Value,
+    y: Value,
+    z: Value,
 };
 
 export type ActionLaunch = {
@@ -243,8 +233,7 @@ export type Action =
     | ActionClearPotionEffects
     | ActionGiveExperienceLevels
     | ActionSendToLobby
-    | ActionChangeStat
-    | ActionChangeGlobalStat
+    | ActionChangeVar
     | ActionTeleport
     | ActionFailParkour
     | ActionPlaySound
@@ -258,7 +247,6 @@ export type Action =
     | ActionEnchantHeldItem
     | ActionPauseExecution
     | ActionSetTeam
-    | ActionChangeTeamStat
     | ActionDisplayMenu
     | ActionDropItem
     | ActionSetVelocity
