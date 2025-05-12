@@ -3,7 +3,7 @@ import type { Condition } from "./conditions.js";
 import type { ActionHolder } from "./holders.js";
 
 export type PartialElement<T extends { type: string }> = {
-    [K in keyof T]: K extends "type" ? T[K] : Wrap<T[K]> | undefined | null;
+    [K in keyof T]: K extends "type" ? T[K] : Wrap<T[K]> | undefined;
 };
 
 export type PartialActionHolder = PartialElement<ActionHolder>;
