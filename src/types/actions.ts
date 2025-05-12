@@ -101,13 +101,10 @@ export type ActionChangeVar = {
     type: "CHANGE_VAR",
     holder: VarHolder,
     var: VarName,
-} & ({
-    op: "unset"
-} | {
-    op: Operation,
+    op: Operation | "unset",
     value: Value,
     unset: boolean,
-});
+};
 
 export type ActionTeleport = {
     type: "TELEPORT",
