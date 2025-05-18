@@ -1,23 +1,20 @@
 {
-  "name": "housing-common",
-  "version": "1.0.0",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "dev": "npx tsx watch src/index.ts",
-    "lint": "npx @biomejs/biome lint src",
-    "lint:fix": "npx @biomejs/biome lint --write src",
-    "format": "npx @biomejs/biome format src",
-    "format:fix": "npx @biomejs/biome format --write src"
-  },
-  "license": "ISC",
-  "type": "module",
-  "description": "A library that is used for modeling in-game Housing objects such as actions, housing settings, and NPCs, as well as additional utilities to assist with projects such as Hypixel Housing API integration or Housing actions difference algorithm.",
-  "devDependencies": {
-    "@types/node": "^22.12.0",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3",
-    "biome": "^0.3.3"
-  }
+    "name": "housing-common",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "format": "npx prettier \"**/*.{ts,tsx,css,json}\" --write",
+        "prepare": "npm run build"
+    },
+    "license": "MIT",
+    "type": "module",
+    "description": "Common housing structures & utilities",
+    "devDependencies": {
+        "@types/node": "^22.12.0",
+        "prettier": "^3.5.3",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.3"
+    }
 }
